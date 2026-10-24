@@ -1,0 +1,19 @@
+__pycache__/
+*.pyc
+.env
+.venv/
+.ipynb_checkpoints/
+
+# model files and checkpoints
+*.gguf
+*.safetensors
+*.bin
+checkpoints/
+results/**/checkpoints/
+
+# large / re-creatable data (prompts, filtered and sft data stay tracked)
+data/raw/*
+data/teacher_outputs/*
+!data/**/.gitkeep
+data/teacher_logits/*
+!data/teacher_logits/.gitkeep
