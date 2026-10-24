@@ -2,13 +2,10 @@ transformers
 accelerate
 huggingface_hub
 datasets
-peft
-trl
 pyyaml
-pandas
 psutil
 sentencepiece
-# GPU only (QLoRA / 4-bit loading):
-# bitsandbytes
-# CPU GGUF inference backend:
-# llama-cpp-python
+# GPU only (4-bit loading):
+bitsandbytes
+# CPU/GGUF backend:
+llama-cpp-python
