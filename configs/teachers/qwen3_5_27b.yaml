@@ -1,0 +1,23 @@
+# Teacher candidate: Qwen3.5 27B dense (Apache 2.0). VERIFY repo ids on huggingface.co.
+name: qwen3_5_27b
+family: qwen3_5
+hf_repo: Qwen/Qwen3.5-27B
+license: apache-2.0
+backend: gguf
+gguf:
+  path: ""
+  repo: ""
+  file: ""
+  n_ctx: 4096
+  n_gpu_layers: 0
+hf:
+  quant: 4bit
+chat_template_kwargs:
+  enable_thinking: false   # hf backend; for gguf use prompt_suffix or rely on strip_think
+system_prompt: ""
+prompt_suffix: ""          # e.g. " /no_think" if the GGUF template supports the soft switch
+strip_think: true
+generation:
+  max_new_tokens: 512
+  temperature: 0.7
+  top_p: 0.9

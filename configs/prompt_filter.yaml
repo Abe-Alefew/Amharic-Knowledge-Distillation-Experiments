@@ -1,0 +1,42 @@
+# Prompt filtering (stage after build_prompts). Everything here is editable.
+in: data/prompts/prompts_raw.jsonl
+out: data/prompts/prompts_filtered.jsonl
+rejected: data/prompts/prompts_rejected.jsonl
+report: data/prompts/filter_report.json
+evaluation_file: data/evaluation.jsonl     # the 60 official eval prompts (read-only)
+
+license_allowlist: [apache-2.0, mit, cc0-1.0, cc-by-4.0, cc-by-sa-3.0, cc-by-sa-4.0]
+allowed_provenance: [human]                # drops machine_translated / synthetic records
+
+# Per-task bounds on prompt length in words (instruction + source text).
+word_bounds:
+  default:        [3, 400]
+  qa:             [3, 200]
+  summarization:  [90, 650]
+  translation:    [8, 120]
+  wiki_knowledge: [3, 30]
+
+# Token budget. Exact when --tokenizer-repo is given, otherwise words * est_tokens_per_word.
+max_prompt_tokens: 1800                    # leaves room for ~512 output tokens in a 4096 context
+est_tokens_per_word: 3.5
+
+# Ge'ez-script share of letters in the whole prompt. Translation is exempt (0.0): en2am prompts
+# contain a long English sentence, and build_prompts already requires the Amharic side to be >= 0.9 Ge'ez.
+min_geez_ratio:
+  default: 0.6
+  qa: 0.6
+  summarization: 0.85
+  wiki_knowledge: 0.8
+  translation: 0.0
+
+noise:
+  max_symbol_ratio: 0.08                   # emoji / odd symbols (letters, digits, punctuation are fine)
+  max_char_run: 6                          # same character repeated more than this many times
+  min_distinct_word_ratio: 0.35            # only checked for prompts with >= 8 words
+  blocklist_substrings: []                 # e.g. ["ይመዝገቡ", "ቻናላችንን"] for Telegram ads
+
+dedupe:
+  near_dup_jaccard: 0.8                    # char 5-gram Jaccard inside the pool
+  eval_jaccard: 0.6                        # full prompt vs evaluation prompt
+  eval_containment: 0.7                    # share of the smaller text found in the other
+  min_containment_shingles: 40             # containment only for texts >= ~44 chars (short strings overlap by chance)

@@ -1,0 +1,89 @@
+# Prompt-pool design. Tasks -> sources -> templates. Edit weights/quotas freely.
+seed: 42
+target_total: 4500
+candidate_factor: 1.5          # load 1.5x the quota so shortfalls can be refilled
+out: data/prompts/prompts_raw.jsonl
+
+# 4 task types. Weights are renormalised over tasks that have at least one enabled source.
+tasks:
+  qa:             {weight: 0.40, sources: {aya: 0.35, sentence_questions: 0.65}}
+  summarization:  {weight: 0.25, sources: {news: 1.0}}
+  translation:    {weight: 0.20, sources: {hornmt: 1.0}}
+  wiki_knowledge: {weight: 0.15, sources: {wikipedia: 1.0}}
+
+sources:
+  aya:                          # human-written Amharic instructions
+    enabled: true
+    hf_repo: CohereLabs/aya_dataset
+    license: apache-2.0
+    provenance: human
+    min_chars: 8
+    max_words: 400
+    min_geez_ratio: 0.5
+    store_references: true      # keep the human answer in meta.reference (useful for eval, not training)
+
+  sentence_questions:           # Telegram-sourced sentences; keep only genuine questions
+    enabled: true
+    hf_repo: a3xrfgb/amharic-sentences-corpus
+    license: apache-2.0         # dataset-card label; underlying text is scraped from Telegram
+    provenance: human
+    text_column: null           # null = auto-detect (text/sentence/...)
+    max_scan: 600000
+    shuffle_buffer: 20000
+    min_words: 4
+    max_words: 40
+    min_geez_ratio: 0.85
+
+  news:                         # real news articles -> summarization prompts
+    enabled: true
+    hf_repo: rasyosef/amharic-news-category-classification
+    license: cc-by-4.0
+    provenance: human
+    min_words: 80
+    max_words: 500
+    min_geez_ratio: 0.9
+
+  hornmt:                       # human-translated parallel news -> translation prompts
+    enabled: true
+    license: cc-by-4.0
+    provenance: human
+    both_directions: false      # false = one random direction per pair
+    min_words: 5
+    max_words: 60
+    min_geez_ratio: 0.9
+
+  wikipedia:                    # real Amharic Wikipedia (human-edited); titles -> knowledge prompts
+    enabled: true
+    hf_repo: wikimedia/wikipedia
+    hf_config: "20231101.am"
+    license: cc-by-sa-3.0       # Wikipedia text is CC BY-SA (+ GFDL): ShareAlike applies to redistributed text
+    provenance: human
+    min_text_chars: 1000        # skip stubs
+    max_title_words: 5
+    min_title_geez_ratio: 0.9
+    exclude_title_substrings: ["የማያሻማ", "ዝርዝር", "ዋናው ገጽ", ":"]
+
+templates:
+  summarization:
+    - "የሚከተለውን ዜና በሁለት ወይም በሦስት ዓረፍተ ነገሮች አጠቃልል፦\n\n{text}"
+    - "ይህን ጽሑፍ በአጭሩ አጠቃልልልኝ፦\n\n{text}"
+    - "ከዚህ በታች ያለውን ዜና ዋና ዋና ነጥቦቹን ብቻ በመያዝ በአጭሩ ጻፍ፦\n\n{text}"
+    - "{text}\n\nከላይ ያለውን ዜና በአጭሩ አጠቃልል።"
+    - "ይህ ዜና ስለ ምን እንደሚያወራ በአጭሩ አስረዳኝ፦\n\n{text}"
+    - "የሚከተለውን ጽሑፍ ዋና ሐሳብ በአንድ አንቀጽ ግለጽ፦\n\n{text}"
+  translation_am2en:
+    - "የሚከተለውን የአማርኛ ዓረፍተ ነገር ወደ እንግሊዝኛ ተርጉም፦\n\n{text}"
+    - "ይህን ወደ እንግሊዝኛ ተርጉምልኝ፦ {text}"
+    - "ከአማርኛ ወደ እንግሊዝኛ ተርጉም፦\n\n{text}"
+    - "{text}\n\nይህን ዓረፍተ ነገር ወደ እንግሊዝኛ ተርጉም።"
+  translation_en2am:
+    - "የሚከተለውን የእንግሊዝኛ ዓረፍተ ነገር ወደ አማርኛ ተርጉም፦\n\n{text}"
+    - "ይህን ወደ አማርኛ ተርጉምልኝ፦ {text}"
+    - "ከእንግሊዝኛ ወደ አማርኛ ተርጉም፦\n\n{text}"
+    - "{text}\n\nይህን ዓረፍተ ነገር ወደ አማርኛ ተርጉም።"
+  wiki_knowledge:               # {text} = article title
+    - "ስለ «{text}» በአጭሩ አብራራ።"
+    - "«{text}» ምንድን ነው? ዋና ዋና ነጥቦችን ንገረኝ።"
+    - "ስለ «{text}» ሦስት ዋና ዋና እውነታዎችን ጥቀስ።"
+    - "«{text}» በሚል ርዕስ አጭር መግለጫ ጻፍ።"
+    - "ስለ «{text}» ለጀማሪ በሚገባ መልኩ አስረዳ።"

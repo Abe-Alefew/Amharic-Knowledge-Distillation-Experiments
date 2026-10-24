@@ -1,0 +1,23 @@
+# Optional alternative: Qwen3.6 35B-A3B MoE (Apache 2.0) - faster on CPU (3B active params).
+name: qwen3_6_35b_a3b
+family: qwen3_6
+hf_repo: Qwen/Qwen3.6-35B-A3B
+license: apache-2.0
+backend: gguf
+gguf:
+  path: ""
+  repo: ""
+  file: ""
+  n_ctx: 4096
+  n_gpu_layers: 0
+hf:
+  quant: 4bit
+chat_template_kwargs:
+  enable_thinking: false
+system_prompt: ""
+prompt_suffix: ""
+strip_think: true
+generation:
+  max_new_tokens: 512
+  temperature: 0.7
+  top_p: 0.9
