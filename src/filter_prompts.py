@@ -125,6 +125,20 @@ def read_eval_texts(path):
     return [normalize_text(t) for t in texts if t.strip()]
 
 
+def read_eval_pairs(path):
+    """HornMT pair indices held out for evaluation (so BOTH translation directions are removed from training)."""
+    pairs = set()
+    if path.exists():
+        for line in open(path, encoding="utf-8"):
+            try:
+                m = json.loads(line).get("meta", {})
+            except (json.JSONDecodeError, AttributeError):
+                continue
+            if isinstance(m, dict) and m.get("pair_index") is not None:
+                pairs.add(m["pair_index"])
+    return pairs
+
+
 def eval_overlap(records, eval_texts, d):
     esets = [shingles(t) for t in eval_texts]
     flagged = {}
@@ -190,6 +204,11 @@ def main():
     flagged = eval_overlap(unique, eval_texts, d) if eval_texts else {}
     for i, k in flagged.items():
         rejected.append({**unique[i], "reject_reason": f"overlaps_evaluation_prompt:{k}"})
+    held_out = read_eval_pairs(eval_path)
+    for i, r in enumerate(unique):
+        if i not in flagged and r["source"] == "hornmt" and r.get("meta", {}).get("pair_index") in held_out:
+            flagged[i] = "hornmt_pair"
+            rejected.append({**r, "reject_reason": "held_out_for_evaluation:hornmt_pair"})
     final = [r for i, r in enumerate(unique) if i not in flagged]
     for r in final:
         r["n_words"] = wc(r["prompt"])
