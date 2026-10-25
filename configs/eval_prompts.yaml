@@ -1,0 +1,70 @@
+# Evaluation-set design: 60-100 prompts from real, human-made Amharic datasets.
+seed: 1234
+out: data/evaluation.jsonl
+report: data/evaluation_report.json
+min_total: 60
+max_total: 100
+
+sources:
+  belebele:            # reading-comprehension MCQ (auto-scorable: answer is 1-4)
+    enabled: true
+    n: 20
+    task: reading_comprehension
+    hf_repo: facebook/belebele
+    hf_config: amh_Ethi
+    split: test
+    license: cc-by-sa-4.0        # per the Belebele README; verify
+    provenance: human
+  afrimmlu:            # knowledge MCQ, human-translated MMLU items (auto-scorable: A-D)
+    enabled: true
+    n: 20
+    task: knowledge_mcq
+    hf_repo: masakhane/afrimmlu
+    hf_config: amh
+    split: test
+    license: unspecified         # the dataset card no longer lists a license; check before redistributing
+    provenance: human
+  hornmt:              # held out of the training prompt pool (filter_prompts drops these pairs)
+    enabled: true
+    n: 20                        # half am->en, half en->am
+    task: translation
+    license: cc-by-4.0
+    provenance: human
+    min_words: 6
+    max_words: 40
+  aya:                 # held-out human-written instructions (filter_prompts drops them from training)
+    enabled: true
+    n: 20
+    task: instruction
+    hf_repo: CohereLabs/aya_dataset
+    license: apache-2.0
+    provenance: human
+    min_words: 4
+    max_words: 150
+    min_geez_ratio: 0.7
+  news:                # held-out news articles; reference = headline (a WEAK reference, judge by hand)
+    enabled: true
+    n: 10
+    task: summarization
+    hf_repo: rasyosef/amharic-news-category-classification
+    license: cc-by-4.0
+    provenance: human
+    min_words: 90
+    max_words: 400
+    min_geez_ratio: 0.9
+  ethionlp_instructions:   # DISABLED by default: Walia mixes in machine-translated English instruction data
+    enabled: false
+    n: 10
+    task: instruction
+    hf_repo: EthioNLP/Amharic_Instruction_dataset
+    split: test
+    license: unverified
+    provenance: unverified
+    min_words: 4
+    max_words: 150
+    min_geez_ratio: 0.7
+
+templates:
+  mcq_rc: "የሚከተለውን ጽሑፍ አንብበህ ጥያቄውን መልስ። ከአራቱ አማራጮች ትክክለኛውን ቁጥር (1፣ 2፣ 3 ወይም 4) ብቻ ጻፍ።\n\nጽሑፍ፦\n{passage}\n\nጥያቄ፦ {question}\n\n1. {a1}\n2. {a2}\n3. {a3}\n4. {a4}\n\nመልስ፦"
+  mcq_knowledge: "የሚከተለውን ጥያቄ ከአራቱ አማራጮች በአንዱ መልስ። ትክክለኛውን ፊደል (A፣ B፣ C ወይም D) ብቻ ጻፍ።\n\nጥያቄ፦ {question}\n\nA. {a1}\nB. {a2}\nC. {a3}\nD. {a4}\n\nመልስ፦"
+# translation / summarization templates are reused from configs/prompts.yaml
