@@ -1,0 +1,50 @@
+{
+  "total": 4500,
+  "by_task": {
+    "qa": 1800,
+    "translation": 900,
+    "summarization": 1125,
+    "wiki_knowledge": 675
+  },
+  "by_source": {
+    "sentence_questions": 1170,
+    "hornmt": 900,
+    "news": 1125,
+    "wikipedia": 675,
+    "aya": 630
+  },
+  "by_provenance": {
+    "human": 4500
+  },
+  "selection_detail": {
+    "qa/aya": {
+      "quota": 630,
+      "loaded": 946,
+      "taken": 630
+    },
+    "qa/sentence_questions": {
+      "quota": 1170,
+      "loaded": 1756,
+      "taken": 1170
+    },
+    "summarization/news": {
+      "quota": 1125,
+      "loaded": 1688,
+      "taken": 1125
+    },
+    "translation/hornmt": {
+      "quota": 900,
+      "loaded": 1351,
+      "taken": 900
+    },
+    "wiki_knowledge/wikipedia": {
+      "quota": 675,
+      "loaded": 1013,
+      "taken": 675
+    }
+  },
+  "prompt_words_mean": 71.6,
+  "prompt_words_median": 17.0,
+  "prompt_words_max": 511,
+  "warnings": []
+}

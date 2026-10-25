@@ -1,0 +1,45 @@
+{
+  "input": 4500,
+  "kept": 4402,
+  "rejected": 98,
+  "evaluation_prompts_checked": 90,
+  "kept_by_task": {
+    "qa": 1746,
+    "translation": 889,
+    "summarization": 1103,
+    "wiki_knowledge": 664
+  },
+  "kept_by_source": {
+    "sentence_questions": 1169,
+    "hornmt": 889,
+    "news": 1103,
+    "wikipedia": 664,
+    "aya": 577
+  },
+  "raw_by_task": {
+    "qa": 1800,
+    "translation": 900,
+    "summarization": 1125,
+    "wiki_knowledge": 675
+  },
+  "reject_reasons": {
+    "too_long": 9,
+    "too_short": 16,
+    "char_repeat": 4,
+    "pii_or_link": 2,
+    "low_geez_ratio": 1,
+    "near_duplicate_of": 42,
+    "overlaps_evaluation_prompt": 19,
+    "held_out_for_evaluation": 5
+  },
+  "reject_by_source": {
+    "aya": 53,
+    "news": 22,
+    "sentence_questions": 1,
+    "wikipedia": 11,
+    "hornmt": 11
+  },
+  "est_tokens_mean": 250.6,
+  "est_tokens_max": 1788,
+  "token_counting": "estimate"
+}

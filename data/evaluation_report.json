@@ -1,0 +1,28 @@
+{
+  "total": 90,
+  "by_task": {
+    "translation": 20,
+    "instruction": 20,
+    "knowledge_mcq": 20,
+    "reading_comprehension": 20,
+    "summarization": 10
+  },
+  "by_source": {
+    "hornmt": 20,
+    "aya": 20,
+    "afrimmlu": 20,
+    "belebele": 20,
+    "news": 10
+  },
+  "by_answer_type": {
+    "translation": 20,
+    "free_text": 20,
+    "mcq_letter": 20,
+    "mcq_1to4": 20,
+    "weak_reference": 10
+  },
+  "words_mean": 69.9,
+  "warnings": [
+    "afrimmlu: license is 'unspecified'"
+  ]
+}

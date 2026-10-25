@@ -5,7 +5,7 @@ datasets
 pyyaml
 psutil
 sentencepiece
-# GPU only (4-bit loading):
-bitsandbytes
-# CPU/GGUF backend:
-llama-cpp-python
+# # GPU only (4-bit loading):
+# bitsandbytes
+# # CPU/GGUF backend:
+# llama-cpp-python
